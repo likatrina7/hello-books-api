@@ -46,11 +46,17 @@ def handle_single_book(book_id):
 
 @books_bp.route('', methods=["GET"], strict_slashes=False)
 def get_all_books():
-    books = Book.query.all()
+    # new code for check Query Param
+    title_query = request.args.get("title")
+    if title_query:
+        books = Book.query.filter_by(title=title_query)
+    else:
+        books = Book.query.all()
+    # new code end
     books_response = []
     for book in books:
         books_response.append(book.to_json())
-    return jsonify(books_response)
+    return jsonify(books_response), 200
 
 @books_bp.route('', methods=["POST"], strict_slashes=False)
 def create_book():
@@ -66,27 +72,27 @@ def create_book():
         }, 201
 
 # bp_02
-hello_world_bp = Blueprint("hello_world", __name__)
+# hello_world_bp = Blueprint("hello_world", __name__)
 
-@hello_world_bp.route('/hello-world', methods=["GET"])
-def get_hello_world():
-    my_reponse = "Hello, World!"
-    return my_reponse
+# @hello_world_bp.route('/hello-world', methods=["GET"])
+# def get_hello_world():
+#     my_reponse = "Hello, World!"
+#     return my_reponse
 
-@hello_world_bp.route('/hello-world/JSON', methods=["GET"])
-def hello_world_json():
-    return{
-        'name': 'Kat',
-        'message': 'Morning!'
-    }, 200
+# @hello_world_bp.route('/hello-world/JSON', methods=["GET"])
+# def hello_world_json():
+#     return{
+#         'name': 'Kat',
+#         'message': 'Morning!'
+#     }, 200
 
-@hello_world_bp.route("/broken-endpoint-with-broken-server-code")
-def broken_endpoint():
-    response_body = {
-        "name": "Ada Lovelace",
-        "message": "Hello!",
-        "hobbies": ["Fishing", "Swimming", "Watching Reality Shows"]
-    }
-    new_hobby = "Surfing"
-    response_body["hobbies"].append(new_hobby)
-    return response_body 
+# @hello_world_bp.route("/broken-endpoint-with-broken-server-code")
+# def broken_endpoint():
+#     response_body = {
+#         "name": "Ada Lovelace",
+#         "message": "Hello!",
+#         "hobbies": ["Fishing", "Swimming", "Watching Reality Shows"]
+#     }
+#     new_hobby = "Surfing"
+#     response_body["hobbies"].append(new_hobby)
+#     return response_body 
